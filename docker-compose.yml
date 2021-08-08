@@ -1,0 +1,40 @@
+version: "3.3"
+
+services:
+    patcherservice:
+        image: ${REGISTRY}-patcherservice:master
+        container_name: patcherservice
+        ports:
+            - "8001:8001"
+            - "8002:8002"
+        depends_on:
+            - db
+        environment:
+            SERVE_REST_ADDRESS: :8001
+            SERVE_GRPC_ADDRESS: :8002
+            DB_USER: root
+            DB_PASSWORD: 1234
+            DB_HOST: patcherservice-db
+            DB_NAME: patcherservice
+            TOKEN_SECRET_KEY: ${PATCHER_SECRET_KEY}
+
+    db:
+        image: percona
+        container_name: services-db
+        environment:
+            MYSQL_ROOT_PASSWORD: 1234
+        ports:
+            - "3306:3306"
+        volumes:
+            - db:/var/lib/mysql
+        healthcheck:
+            test: mysql -h127.0.0.1 -uroot -p1234 -e 'SELECT 1'
+            interval: 20s
+            timeout: 1s
+        networks:
+            default:
+                aliases:
+                    - patcherservice-db
+
+volumes:
+    db:
