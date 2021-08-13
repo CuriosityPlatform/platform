@@ -10,6 +10,6 @@ SERVICES=(patcherservice)
 
 pushd "$PLATFORM_ROOT" > /dev/null || exit
 
-docker-compose logs -f $(join ' ' "${SERVICES[@]}")
+docker compose logs -f $(join ' ' "${SERVICES[@]}")
 
 popd > /dev/null || exit

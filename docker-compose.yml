@@ -1,12 +1,12 @@
-version: "3.3"
+version: "3.7"
 
 services:
     patcherservice:
         image: ${REGISTRY}-patcherservice:master
         container_name: patcherservice
+        restart: always
         ports:
             - "8001:8001"
-            - "8002:8002"
         depends_on:
             - db
         environment:
@@ -17,10 +17,16 @@ services:
             DB_HOST: patcherservice-db
             DB_NAME: patcherservice
             TOKEN_SECRET_KEY: ${PATCHER_SECRET_KEY}
+        networks:
+            default:
+                aliases:
+#                      named apigateway to set correct title in nginx.conf
+                    -  apigateway
 
     db:
         image: percona
         container_name: services-db
+        restart: always
         environment:
             MYSQL_ROOT_PASSWORD: 1234
         ports:
@@ -35,6 +41,20 @@ services:
             default:
                 aliases:
                     - patcherservice-db
+
+    nginx:
+        image: services-nginx:1.21.1
+        build:
+            dockerfile: Dockerfile
+            context: docker/nginx
+        container_name: services-nginx
+        restart: always
+        depends_on:
+            - patcherservice
+        ports:
+            - "80:80"
+            - "443:443"
+            - "8002:8002"
 
 volumes:
     db:
