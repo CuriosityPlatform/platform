@@ -1,0 +1,28 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: storage-route
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: "Host(`storage.makerov.space`) && !PathPrefix(`/docs`)"
+      kind: Rule
+      services:
+        - name: keydrive-service
+          port: 5555
+---
+# Uncomment to expose api files of keydrive
+#apiVersion: traefik.containo.us/v1alpha1
+#kind: IngressRoute
+#metadata:
+#  name: storage-docs-route
+#spec:
+#  entryPoints:
+#    - web
+#  routes:
+#    - match: "Host(`storage.makerov.space`) && PathPrefix(`/docs`)"
+#      kind: Rule
+#      services:
+#        - name: keydrive-service
+#          port: 5555

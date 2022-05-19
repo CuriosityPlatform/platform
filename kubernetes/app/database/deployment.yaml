@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: master-db
+  labels:
+    app: master-db
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: master-db
+  template:
+    metadata:
+      labels:
+        app: master-db
+    spec:
+      containers:
+        - name: master-db
+          image: postgres:14
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: masterdb-host-volume
+              mountPath: "/var/lib/postgresql/data"
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: masterdb-secret
+                  key: DB_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: masterdb-secret
+                  key: DB_USER
+          ports:
+            - name: tcp
+              containerPort: 5432
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "postgres" -h 127.0.0.1 -p 5432
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+
+      volumes:
+        - name: masterdb-host-volume
+          persistentVolumeClaim:
+            claimName: masterdb-host-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: masterdb-service
+spec:
+  selector:
+    app: master-db
+  ports:
+    - port: 5432
+      name: masterdb
+      protocol: TCP
+      targetPort: 5432

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: masterdb-secret
+data:
+  DB_PASSWORD: "1234"
+  DB_USER: "microuser"

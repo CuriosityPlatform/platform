@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keydrive
+  labels:
+    app: keydrive
+    tier: storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keydrive
+      tier: storage
+  template:
+    metadata:
+      labels:
+        app: keydrive
+        tier: storage
+    spec:
+      containers:
+        - name: keydrive
+          image: ghcr.io/keydrive/keydrive:edge
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_HOST
+              value: masterdb-service
+            - name: POSTGRES_DB
+              value: keydrive
+            - name: POSTGRES_USER
+              value: "microuser"
+            - name: POSTGRES_PASSWORD
+              value: "1234"
+          volumeMounts:
+            - name: keydrive-host-volume
+              mountPath: "/libraries"
+          ports:
+            - name: frontend
+              containerPort: 5555
+              protocol: TCP
+
+      volumes:
+        - name: keydrive-host-volume
+          persistentVolumeClaim:
+            claimName: keydrive-host-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keydrive-service
+spec:
+  selector:
+    app: keydrive
+  ports:
+    - port: 5555
+      name: keydrive-frontend
+      protocol: TCP
+      targetPort: 5555
