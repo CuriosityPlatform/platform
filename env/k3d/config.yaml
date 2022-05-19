@@ -6,6 +6,8 @@ metadata:
 volumes:
   # Mount data folder
   - volume: {{PROJECT_ROOT_DIR}}/env/k3d/data:/data
+  # Add HelmCharConfig for Traefik
+  - volume: {{PROJECT_ROOT_DIR}}/env/k3d/traefik-config.yaml:/var/lib/rancher/k3s/server/manifests/traefik-config.yaml
 
 ports:
   - port: 80:80

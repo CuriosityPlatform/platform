@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: account
+  labels:
+    app: account
+    tier: service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: account
+      tier: service
+  template:
+    metadata:
+      labels:
+        app: account
+        tier: service
+    spec:
+      containers:
+        - name: account
+          image: vadimmakerov/account:master
+          imagePullPolicy: IfNotPresent
+          args:
+            - service
+          env:
+            - name: SERVE_REST_ADDRESS
+              value: ":8001"
+            - name: POSTGRES_HOST
+              value: masterdb-service
+            - name: POSTGRES_DB
+              value: keydrive
+            - name: POSTGRES_USER
+              value: "microuser"
+            - name: POSTGRES_PASSWORD
+              value: "1234"
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: account
+  labels:
+    app: traefik
+spec:
+  type: ClusterIP
+  selector:
+    app: account
+  ports:
+    - port: 8001
+      name: http
+      protocol: TCP
+      targetPort: 8001

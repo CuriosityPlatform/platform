@@ -1,0 +1,37 @@
+# Workaround with another ingress since traefik in forwardAuth middleware does not support detecting service name in address
+#  https://github.com/traefik/traefik/issues/8051
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: account-auth
+spec:
+  forwardAuth:
+    address: http://127.0.0.1:6000/account/auth
+    authResponseHeaders:
+      - authorization
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: auth-route
+spec:
+  entryPoints:
+    - auth-proxy
+  routes:
+    - match: "PathPrefix(`/account/auth`)"
+      middlewares:
+        - name: auth-route-whitelist
+      kind: Rule
+      services:
+        - name: account
+          port: 8001
+---
+# Protect access to :6000 port only from localhost
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: auth-route-whitelist
+spec:
+  ipWhiteList:
+    sourceRange:
+      - 127.0.0.1
