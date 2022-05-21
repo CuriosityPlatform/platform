@@ -9,6 +9,12 @@ volumes:
   # Add HelmCharConfig for Traefik
   - volume: {{PROJECT_ROOT_DIR}}/env/k3d/traefik-config.yaml:/var/lib/rancher/k3s/server/manifests/traefik-config.yaml
 
+registries:
+  create:
+    name: registry.makerov.space
+    host: "0.0.0.0"
+    hostPort: "5000"
+
 ports:
   - port: 80:80
     nodeFilters:

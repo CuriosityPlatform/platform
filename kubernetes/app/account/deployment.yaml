@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: account
-          image: vadimmakerov/account:master
+          image: registry.makerov.space:5000/account:master
           imagePullPolicy: IfNotPresent
           args:
             - service

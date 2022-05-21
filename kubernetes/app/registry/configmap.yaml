@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: registry-config
+data:
+  registries.yml: |
+    registries:
+      k8sRegistry:
+        displayname: registry.makerov.space:5000
+        url: http://registry.makerov.space 
+        port: 5000
+        refresh-rate: "5m"
+        skip-tls-validation: true
+        dockerhub-integration: true
