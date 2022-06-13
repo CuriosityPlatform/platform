@@ -6,7 +6,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: "Host(`storage.makerov.space`) && !PathPrefix(`/docs`) && !PathPrefix(`/editor`)"
+    - match: "Host(`storage.makerov.space`) && !PathPrefix(`/docs`)"
       middlewares:
         - name: account-auth
       kind: Rule
