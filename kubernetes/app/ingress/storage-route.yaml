@@ -6,7 +6,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: "Host(`storage.makerov.space`) && !PathPrefix(`/docs`)"
+    - match: "Host(`storage.makerov.space`) && !PathPrefix(`/docs`) && !PathPrefix(`/editor`)"
       middlewares:
         - name: account-auth
       kind: Rule
@@ -14,6 +14,22 @@ spec:
         - name: keydrive-service
           port: 5555
 ---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: storage-editor-route
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: "Host(`storageeditor.makerov.space`)"
+      kind: Rule
+      middlewares:
+        - name: account-auth
+      services:
+        - name: storage-editor-service
+          port: 3000
+
 # Uncomment to expose api files of keydrive
 #apiVersion: traefik.containo.us/v1alpha1
 #kind: IngressRoute

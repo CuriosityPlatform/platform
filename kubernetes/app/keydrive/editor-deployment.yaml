@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage-editor
+  labels:
+    app: vscode
+    tier: storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vscode
+      tier: storage
+  template:
+    metadata:
+      labels:
+        app: vscode
+        tier: storage
+    spec:
+      containers:
+        - name: storage-editor
+          image: gitpod/openvscode-server
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: keydrive-host-volume
+              mountPath: "/home/workspace/libraries"
+          ports:
+            - name: frontend
+              containerPort: 3000
+              protocol: TCP
+
+      volumes:
+        - name: keydrive-host-volume
+          persistentVolumeClaim:
+            claimName: keydrive-host-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: storage-editor-service
+spec:
+  selector:
+    app: vscode
+  ports:
+    - port: 3000
+      name: storage-editor-service
+      protocol: TCP
+      targetPort: 3000
