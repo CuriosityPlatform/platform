@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filebrowser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filebrowser
+  template:
+    metadata:
+      labels:
+        app: filebrowser
+    spec:
+      initContainers:
+        - name: busybox
+          image: busybox:1.35.0
+          command: ['sh', '-c', 'mkdir -p /data/srv'] # create /data/srv
+          volumeMounts:
+            - mountPath: /data
+              name: filebrowser-volume
+
+      containers:
+        - name: filebrowser
+          image: filebrowser/filebrowser:v2.23.0
+          args:
+            - "-c"
+            - /var/config.json
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - mountPath: /data
+              name: filebrowser-volume
+            - name: filebrowser-config
+              mountPath: /var
+
+      volumes:
+        - name: filebrowser-volume
+          persistentVolumeClaim:
+            claimName: filebrowser-host-claim
+        - name: filebrowser-config
+          configMap:
+            name: filebrowser-config
+            items:
+              - key: config.json
+                path: config.json
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: filebrowser
+spec:
+  selector:
+    app: filebrowser
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
