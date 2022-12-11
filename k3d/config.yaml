@@ -1,0 +1,30 @@
+apiVersion: k3d.io/v1alpha4
+kind: Simple
+metadata:
+  name: curiosity
+
+kubeAPI:
+  host: "makerov.space.local"
+
+volumes:
+  # Mount data folder
+  - volume: /home/supernotuser/dev/CuriosityServices/platform/env/local/data:/data
+
+ports:
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+
+#registries:
+#  create:
+#    name: registry.makerov.space
+#    hostPort: "5000"
+#    volumes:
+#      - /home/supernotuser/dev/CuriosityServices/platform/env/local/data/registry:/var/lib/registry
+
+options:
+  k3s:
+    extraArgs:
+      - arg: --disable=traefik
+        nodeFilters:
+          - "server:*"

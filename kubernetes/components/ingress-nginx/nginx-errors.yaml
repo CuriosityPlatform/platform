@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-errors
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-errors
+  template:
+    metadata:
+      labels:
+        app: nginx-errors
+    spec:
+      initContainers:
+        - name: staticstorage-warm-up-cache
+          image: vadimmakerov/staticstorage:master
+          args:
+            - "-c"
+            - /var/config/config.json
+            - warm-cache
+          volumeMounts:
+            - mountPath: /var/staticstorage
+              name: cache
+            - name: staticstorage-config
+              mountPath: /var/config
+
+      containers:
+        - name: staticstorage
+          image: vadimmakerov/staticstorage:master
+          args:
+            - "-c"
+            - /var/config/config.json
+            - server
+            - --no-warm-up-cache # don`t warm up cache twice
+          ports:
+            - containerPort: 8080
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          volumeMounts:
+            - name: cache
+              mountPath: /var/staticstorage
+            - name: staticstorage-config
+              mountPath: /var/config
+
+      volumes:
+        - name: cache
+          emptyDir: { }
+        - name: staticstorage-config
+          configMap:
+            name: staticstorage-config
+            items:
+              - key: config.json
+                path: config.json
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-errors
+spec:
+  selector:
+    app: nginx-errors
+  ports:
+    - port: 8080
+      name: nginx-errors
+      protocol: TCP
+      targetPort: 8080

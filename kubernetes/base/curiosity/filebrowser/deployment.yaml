@@ -56,5 +56,6 @@ spec:
     app: filebrowser
   ports:
     - port: 80
+      name: filebrowser
       protocol: TCP
       targetPort: 80
