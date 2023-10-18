@@ -1,0 +1,10 @@
+version: '3'
+
+includes:
+  local:
+    taskfile: ./local/Taskfile.yml
+    dir: ./local
+
+  dark5:
+    taskfile: ./dark5/Taskfile.yml
+    dir: ./dark5

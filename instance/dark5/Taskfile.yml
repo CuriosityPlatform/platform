@@ -1,0 +1,38 @@
+version: '3'
+
+vars:
+  cluster_name: dark5
+  cluster_host: microuser-DARK5
+
+  address: "192.168.3.17"
+  user: "microuser"
+
+  ssh_command: "ssh {{.user}}@{{.address}}"
+
+  k3d_config: k3d.yaml
+
+tasks:
+  create:
+    cmds:
+      # create cluster
+      - "{{ .ssh_command }} -- k3d cluster create {{.cluster_name}} --config=- < {{ .k3d_config }}"
+
+  start:
+    cmds:
+      - "{{ .ssh_command }} -- k3d cluster start {{.cluster_name}}"
+
+  stop:
+    cmds:
+      - "{{ .ssh_command }} -- k3d cluster stop {{.cluster_name}}"
+
+  delete:
+    cmds:
+      - "{{ .ssh_command }} -- k3d cluster delete {{.cluster_name}}"
+
+  install-kubeconfig:
+    cmds:
+      - "{{ .ssh_command }} -- cat /home/{{ .user }}/.kube/config > ~/.kube/dark5.yml"
+
+  delete-kubeconfig:
+    cmds:
+      - "rm -rf ~/.kube/dark5.yml"

@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: filebrowser-data-1-volume
+  labels:
+    directory: filebrowser-data-1
+spec:
+  capacity:
+    storage: 50Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: slow
+  hostPath:
+    path: /mnt/data/filebrowser
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: filebrowser-data-1-claim
+spec:
+  storageClassName: slow
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+  selector:
+    matchLabels:
+      directory: filebrowser-data-1

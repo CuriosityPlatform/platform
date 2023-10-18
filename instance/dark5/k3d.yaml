@@ -1,0 +1,40 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+
+kubeAPI:
+  host: "microuser-DARK5"
+
+servers: 1
+agents: 2
+
+volumes:
+  - volume: /k3d-data:/mnt/data
+    nodeFilters:
+      - agent:*
+  - volume: /media/microuser/BAG:/mnt/bag
+    nodeFilters:
+      - agent:*
+
+ports:
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+  - port: 443:443
+    nodeFilters:
+      - loadbalancer
+
+registries:
+  create:
+    name: microuser-dark5
+  config: |
+    mirrors:
+      "microuser-dark4.registry":
+        endpoint:
+          - http://homelab.space.registry:5000
+
+options:
+  k3s:
+    extraArgs:
+      - arg: --disable=traefik
+        nodeFilters:
+          - "server:*"

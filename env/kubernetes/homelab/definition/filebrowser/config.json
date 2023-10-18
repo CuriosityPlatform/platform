@@ -1,0 +1,10 @@
+{
+    "port": 80,
+    "baseURL": "/storage",
+    "address": "",
+    "log": "stdout",
+    "database": "/data/database/filebrowser.db",
+    "root": "/data/srv",
+    "auth.method": "proxy",
+    "auth.header": "X-Auth-Username"
+}

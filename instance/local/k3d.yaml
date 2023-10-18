@@ -1,0 +1,23 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+
+ports:
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+
+registries:
+  create:
+    name: homelab
+  config: |
+    mirrors:
+      "homelab.space.registry":
+        endpoint:
+          - http://homelab.space.registry:5000
+
+options:
+  k3s:
+    extraArgs:
+      - arg: --disable=traefik
+        nodeFilters:
+          - "server:*"

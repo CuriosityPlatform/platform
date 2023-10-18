@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filebrowser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filebrowser
+  template:
+    metadata:
+      labels:
+        app: filebrowser
+    spec:
+      containers:
+        - name: filebrowser
+          image: filebrowser/filebrowser:v2.23.0
+          args:
+            - "-c"
+            - /var/config.json
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: filebrowser-database
+              mountPath: /data/database
+            - name: filebrowser-config
+              mountPath: /var
+
+            - name: filebrowser-data-1-volume
+              mountPath: /data/srv/data-1
+            - name: filebrowser-data-2-volume
+              mountPath: /data/srv/bag
+
+
+      volumes:
+        - name: filebrowser-database
+          persistentVolumeClaim:
+            claimName: filebrowser-database-claim
+        - name: filebrowser-config
+          configMap:
+            name: filebrowser-config
+            items:
+              - key: config.json
+                path: config.json
+
+        - name: filebrowser-data-1-volume
+          persistentVolumeClaim:
+            claimName: filebrowser-data-1-claim
+        - name: filebrowser-data-2-volume
+          persistentVolumeClaim:
+            claimName: filebrowser-data-2-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: filebrowser
+spec:
+  selector:
+    app: filebrowser
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
