@@ -1,0 +1,10 @@
+version: '3'
+
+vars:
+  address: dummy
+
+tasks:
+  # deploys to remote docker compose configuration
+  deploy:
+    cmds:
+      - "ssh root@{{.address}} -- docker compose -f - up -d < docker-compose.yml"
