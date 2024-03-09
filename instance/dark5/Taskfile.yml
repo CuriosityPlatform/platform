@@ -36,3 +36,11 @@ tasks:
   delete-kubeconfig:
     cmds:
       - "rm -rf ~/.kube/dark5.yml"
+
+  up-tunnel:
+    cmds:
+      - "{{ .ssh_command }} -- docker compose -f - up -d < docker-compose.yml"
+
+  down-tunnel:
+    cmds:
+      - "{{ .ssh_command }} -- docker compose -f - down < docker-compose.yml"

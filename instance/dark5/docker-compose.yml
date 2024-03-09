@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  autossh-tunnel:
+    container_name: autossh-tunnel
+    image: jnovack/autossh:2.0.1
+    environment:
+      - SSH_REMOTE_HOST=$REMOTE_HOST
+      - SSH_REMOTE_PORT=22
+      - SSH_BIND_IP=0.0.0.0
+      - SSH_TARGET_PORT=80
+      - SSH_TUNNEL_PORT=3000
+    restart: always
+    network_mode: host
+    volumes:
+      - /home/microuser/.ssh/p641965_id_rsa:/id_rsa
