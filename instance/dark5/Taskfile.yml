@@ -4,10 +4,13 @@ vars:
   cluster_name: dark5
   cluster_host: microuser-DARK5
 
-  address: "192.168.3.17"
-  user: "microuser"
+  dark5address: "192.168.3.17"
+  dark5user: "microuser"
 
-  ssh_command: "ssh {{.user}}@{{.address}}"
+  ssh_command: "ssh {{.dark5user}}@{{.dark5address}}"
+
+  tunnel_remote_host:
+    sh: "gostore cat ihc/p641965-amsterdam/common ip"
 
   k3d_config: k3d.yaml
 
@@ -31,16 +34,20 @@ tasks:
 
   install-kubeconfig:
     cmds:
-      - "{{ .ssh_command }} -- cat /home/{{ .user }}/.kube/config > ~/.kube/dark5.yml"
+      - "{{ .ssh_command }} -- cat /home/{{ .dark5user }}/.kube/config > ~/.kube/dark5.yml"
 
   delete-kubeconfig:
     cmds:
       - "rm -rf ~/.kube/dark5.yml"
 
   up-tunnel:
+    env:
+      REMOTE_HOST: "{{ .tunnel_remote_host }}"
     cmds:
-      - "{{ .ssh_command }} -- docker compose -f - up -d < docker-compose.yml"
+      - "{{ .ssh_command }} -- REMOTE_HOST=$REMOTE_HOST docker compose -f - up -d < docker-compose.yml"
 
   down-tunnel:
+    env:
+      REMOTE_HOST: "{{ .tunnel_remote_host }}"
     cmds:
       - "{{ .ssh_command }} -- docker compose -f - down < docker-compose.yml"

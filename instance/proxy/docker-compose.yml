@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  guardian-tunnel:
+    container_name: guardian-tunnel
+    image: guardian:local
+    command:
+      - proxy
+      - -c
+      - /var/guardian.hcl
+    restart: always
+    network_mode: host
+    volumes:
+      - "/var/guardian.hcl:/var/guardian.hcl"

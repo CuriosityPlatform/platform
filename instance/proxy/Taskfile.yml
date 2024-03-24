@@ -1,0 +1,33 @@
+version: '3'
+
+vars:
+  user: root
+  remote_host:
+    sh: "gostore cat ihc/p641965-amsterdam/common ip"
+
+  proxy_ssh: "ssh {{.user}}@{{.remote_host}}"
+  proxy_scp: "{{.user}}@{{.remote_host}}"
+
+tasks:
+  load-guardian:
+    vars:
+      imagePath: /tmp/guardian.tar
+
+    # load guardian image
+    cmds:
+      - "docker save guardian:local > /tmp/guardian.tar"
+      - "scp {{ .imagePath }} {{ .proxy_scp }}:{{ .imagePath }}"
+      - "{{ .proxy_ssh }} -- docker load -i {{ .imagePath }}"
+      - "rm {{ .imagePath }}"
+
+  move-config:
+    cmds:
+      - "scp guardian.hcl {{ .proxy_scp }}:/var/guardian.hcl"
+
+  up-guardian:
+    cmds:
+      - "{{ .proxy_ssh }} -- docker compose -f - up -d < docker-compose.yml"
+
+  down-guardian:
+    cmds:
+      - "{{ .proxy_ssh }} -- docker compose -f - down < docker-compose.yml"
