@@ -3,22 +3,10 @@ healthcheck {
     path    = "/healthz"
 }
 
-server ":80" {
-    limit {
-        # allow 10 RPS burst up to 20
-        rps = 10
-        burst = 20
-    }
+tcpproxy ":80" {
+    destination = "127.0.0.1:3000"
+}
 
-    downstream cluster {
-        upstream = "cluster"
-
-        rule host {
-            host = "makeroff.ru"
-        }
-    }
-
-    upstream cluster {
-        address = "http://localhost:3000"
-    }
+tcpproxy ":443" {
+    destination = "127.0.0.1:3000"
 }
