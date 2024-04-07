@@ -13,5 +13,16 @@ replacements:
     targets:
       - select:
           kind: Ingress
+          name: homelab
         fieldPaths:
           - spec.rules.[host=APP_HOST].host
+  - source:
+      kind: ConfigMap
+      name: ingress-hosts
+      fieldPath: data.transmission-host
+    targets:
+      - select:
+          kind: Ingress
+          name: homelab-transmission
+        fieldPaths:
+          - spec.rules.[host=TRANSIMISSION_HOST].host

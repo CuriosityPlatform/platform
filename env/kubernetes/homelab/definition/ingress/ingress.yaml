@@ -20,3 +20,26 @@ spec:
                 name: filebrowser
                 port:
                   number: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homelab-transmission
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30s"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "20s"
+    nginx.ingress.kubernetes.io/listen-ports: "80"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: TRANSIMISSION_HOST # Will be replaced by replacements to current app host
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: transmission
+                port:
+                  number: 9091

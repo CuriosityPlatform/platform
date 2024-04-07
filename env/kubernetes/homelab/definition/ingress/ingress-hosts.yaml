@@ -4,3 +4,4 @@ metadata:
   name: ingress-hosts
 data:
   app-host: "microuser-dark5.local"
+  transmission-host: "transmission.microuser-dark5.local"
