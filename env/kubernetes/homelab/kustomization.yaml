@@ -6,6 +6,7 @@ resources:
   - definition
 
 replacements:
+  # ingress hosts replacements
   - source:
       kind: ConfigMap
       name: ingress-hosts
@@ -26,3 +27,13 @@ replacements:
           name: homelab-transmission
         fieldPaths:
           - spec.rules.[host=TRANSIMISSION_HOST].host
+  - source:
+      kind: ConfigMap
+      name: ingress-hosts
+      fieldPath: data.restic-host
+    targets:
+      - select:
+          kind: Ingress
+          name: homelab-restic
+        fieldPaths:
+          - spec.rules.[host=RESTIC_HOST].host

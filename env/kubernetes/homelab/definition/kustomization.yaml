@@ -6,5 +6,6 @@ namespace: homelab
 resources:
   - filebrowser
   - transmission
+  - restic
   - ingress
   - namespace.yaml

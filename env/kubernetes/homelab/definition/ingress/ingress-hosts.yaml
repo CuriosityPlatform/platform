@@ -5,3 +5,4 @@ metadata:
 data:
   app-host: "microuser-dark5.local"
   transmission-host: "transmission.microuser-dark5.local"
+  restic-host: "restic.microuser-dark5.local"

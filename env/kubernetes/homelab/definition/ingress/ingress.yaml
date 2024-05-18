@@ -43,3 +43,27 @@ spec:
                 name: transmission
                 port:
                   number: 9091
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homelab-restic
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30s"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "20s"
+    nginx.ingress.kubernetes.io/listen-ports: "80"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0" # do not limit body size
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: RESTIC_HOST # Will be replaced by replacements to current app host
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: restic
+                port:
+                  number: 9091
