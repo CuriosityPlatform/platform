@@ -1,0 +1,24 @@
+mod modules "modules/justfile"
+
+[doc("Up dark5 cluster")]
+up: _init && _wait-config _install-kubeconfig
+  terraform apply
+
+[doc("Remove dark5 cluster")]
+down: _init && _remove-kubeconfig
+    terraform destroy
+
+_init:
+    terraform init
+
+kubeconfigOut := "modules/.kube.yaml"
+
+@_wait-config:
+    echo "Wait for kubeconfig..."
+    sleep 20
+
+@_install-kubeconfig:
+    docker cp k3s-server:/output/kubeconfig.yaml {{kubeconfigOut}}
+
+@_remove-kubeconfig:
+    rm -rf {{kubeconfigOut}}

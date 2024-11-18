@@ -1,0 +1,10 @@
+[doc("Install gitea")]
+up: _init
+  terraform apply
+
+[doc("Remove gitea")]
+down: _init
+    terraform destroy
+
+_init:
+    terraform init
