@@ -1,5 +1,7 @@
 mod modules "modules/justfile"
 
+kubeconfigOut := (invocation_directory() + "/" + "modules/.kube.yaml")
+
 [doc("Up dark5 cluster")]
 up: _init && _wait-config _install-kubeconfig
   terraform apply
@@ -8,10 +10,12 @@ up: _init && _wait-config _install-kubeconfig
 down: _init && _remove-kubeconfig
     terraform destroy
 
+[doc("ZSH with configured env")]
+manage $KUBECONFIG=kubeconfigOut:
+    zsh
+
 _init:
     terraform init
-
-kubeconfigOut := "modules/.kube.yaml"
 
 @_wait-config:
     echo "Wait for kubeconfig..."

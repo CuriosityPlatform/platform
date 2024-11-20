@@ -10,6 +10,16 @@ resource "helm_release" "gitea" {
   chart      = "gitea"
 
   # Gitea
+  ## Administration
+  set {
+    name  = "gitea.admin.username"
+    value = "owner"
+  }
+  set {
+    name  = "gitea.admin.password"
+    value = "12345Q"
+  }
+
   ## Actions
   set {
     name  = "actions.enabled"
