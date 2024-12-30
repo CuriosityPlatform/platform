@@ -1,10 +1,12 @@
 address := `gostore cat vps1/vm/vm53841/common address`
-pass := `gostore cat vps1/vm/vm53841/vpn hashpass`
-
-sshaddr := "root@" + address
-ssh := "ssh " + sshaddr
-
+dockerHost := "ssh://root@" + address
 dockerCompose := (invocation_directory() + "/" + "docker-compose.yaml")
 
-up:
-    {{ssh}} -- docker compose -f - up -d < {{dockerCompose}}
+up $DOCKER_HOST=dockerHost $COMPOSE_FILE=dockerCompose:
+    docker compose up -d
+
+down $DOCKER_HOST=dockerHost $COMPOSE_FILE=dockerCompose:
+    docker compose down
+
+manage $DOCKER_HOST=dockerHost $COMPOSE_FILE=dockerCompose:
+    zsh
