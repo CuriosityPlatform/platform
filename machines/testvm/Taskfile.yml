@@ -1,0 +1,18 @@
+version: '3'
+
+vars:
+  name: dark5-test
+  template: docker-rootful
+
+tasks:
+  boot:
+    cmds:
+      - "limactl start --name={{.name}} template://{{.template}}"
+
+  stop:
+    cmd: "limactl stop {{.name}}"
+
+  teardown:
+    cmds:
+      - task: stop
+      - "limactl delete {{.name}}"

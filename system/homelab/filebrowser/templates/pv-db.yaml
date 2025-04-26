@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: filebrowser-pv-db
+  labels:
+    directory: filebrowser-db
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: slow
+  hostPath:
+    path: /mnt
+  # Place pv at agent-1 node
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - "agent-1"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: filebrowser-pvc-db
+spec:
+  storageClassName: slow
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  selector:
+    matchLabels:
+      directory: filebrowser-db

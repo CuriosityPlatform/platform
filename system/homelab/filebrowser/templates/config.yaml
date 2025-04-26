@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebrowser-config
+data:
+  config.json: |
+    {
+      "port": 80,
+      "baseURL": "/storage",
+      "address": "",
+      "log": "stdout",
+      "database": "/data/database/filebrowser.db",
+      "root": "/data/srv"
+    }
+
+  

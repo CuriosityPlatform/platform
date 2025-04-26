@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restic
+  template:
+    metadata:
+      labels:
+        app: restic
+    spec:
+      containers:
+        - name: restic
+          image: restic/rest-server:0.13.0
+          env:
+            - name: "DISABLE_AUTHENTICATION"
+              value: "1"
+            - name: "OPTIONS"
+              value: "--prometheus --prometheus-no-auth"
+          ports:
+            - containerPort: 8000
+              name: http
+          volumeMounts:
+            - name: restic-data-volume
+              mountPath: /data
+
+      volumes:
+        - name: restic-data-volume
+          persistentVolumeClaim:
+            claimName: restic-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restic
+spec:
+  selector:
+    app: restic
+  ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: restic-pvc
+spec:
+  storageClassName: slow
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Gi
+  selector:
+    matchLabels:
+      directory: restic-data

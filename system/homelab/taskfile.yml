@@ -1,0 +1,36 @@
+version: '3'
+
+vars:
+  # split by space
+  releases: ingress restic transmission filebrowser
+
+tasks:
+  install:
+    cmds:
+      - for: { var: releases, as: RELEASE }
+        task: install:{{.RELEASE}}
+
+  uninstall:
+    cmds:
+      - for: { var: releases, as: RELEASE }
+        task: uninstall:{{.RELEASE}}
+
+  install:*:
+    vars:
+      RELEASE: "{{index .MATCH 0}}"
+    dir: '{{.RELEASE}}'
+    cmds:
+      - nelm release plan install -n {{.RELEASE}} -r {{.RELEASE}} .
+      - task: _install_prompt
+      - nelm release install -n {{.RELEASE}} -r {{.RELEASE}} .
+
+  uninstall:*:
+    vars:
+      RELEASE: "{{index .MATCH 0}}"
+    dir: '{{.RELEASE}}'
+    cmds:
+      - nelm release uninstall -n {{.RELEASE}} -r {{.RELEASE}}
+
+  _install_prompt:
+    internal: true
+    prompt: "Release ?"
