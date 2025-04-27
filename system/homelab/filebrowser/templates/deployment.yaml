@@ -28,7 +28,7 @@ spec:
               mountPath: /var
 
             - name: filebrowser-main
-              mountPath: /data/srv/media
+              mountPath: /data/srv/bag
 
       volumes:
         - name: filebrowser-database

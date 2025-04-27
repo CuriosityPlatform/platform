@@ -2,7 +2,7 @@ version: '3'
 
 vars:
   # split by space
-  releases: ingress restic transmission filebrowser
+  releases: ingress-nginx restic transmission filebrowser
 
 tasks:
   install:
