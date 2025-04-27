@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: filebrowser-pv-main
+  name: filebrowser-pv-bag
   labels:
-    directory: filebrowser-main
+    directory: filebrowser-bag
 spec:
   capacity:
     storage: 500Gi
@@ -27,7 +27,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: filebrowser-pvc-main
+  name: filebrowser-pvc-bag
 spec:
   storageClassName: slow
   accessModes:
@@ -37,4 +37,4 @@ spec:
       storage: 500Gi
   selector:
     matchLabels:
-      directory: filebrowser-main
+      directory: filebrowser-bag

@@ -27,7 +27,7 @@ spec:
             - name: filebrowser-config
               mountPath: /var
 
-            - name: filebrowser-main
+            - name: filebrowser-bag
               mountPath: /data/srv/bag
 
       volumes:
@@ -41,9 +41,9 @@ spec:
               - key: config.json
                 path: config.json
 
-        - name: filebrowser-main
+        - name: filebrowser-bag
           persistentVolumeClaim:
-            claimName: filebrowser-pvc-main
+            claimName: filebrowser-pvc-bag
 
 ---
 apiVersion: v1
