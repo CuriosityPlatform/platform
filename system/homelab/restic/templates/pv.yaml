@@ -19,7 +19,7 @@ spec:
     required:
       nodeSelectorTerms:
         - matchExpressions:
-            - key: node-role.kubernetes.io/control-plane
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "true"
+                - "agent-1"
