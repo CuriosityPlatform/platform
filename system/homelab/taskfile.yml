@@ -3,7 +3,7 @@ version: '3'
 vars:
   releases: [
     ingress-nginx,
-    rancher,
+    # rancher, excluded from default installation
     restic,
     transmission,
     filebrowser,
