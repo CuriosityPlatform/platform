@@ -1,7 +1,0 @@
-# Defines paths for BAG storage backup
-
-## Backup own backup server
-restic
-## Disk
-Disk/Photos
-Disk/vadim.makerov
