@@ -5,3 +5,4 @@ rancher:
     enabled: false
   bootstrapPassword: admin
   replicas: 1
+  tls: external
