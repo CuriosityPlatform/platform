@@ -8,6 +8,7 @@ tasks:
   boot:
     cmds:
       - "limactl start --name={{.name}} template://{{.template}}"
+      - "cp ~/.lima/{{.name}}/ssh.config ssh.config"
 
   stop:
     cmd: "limactl stop {{.name}}"
@@ -16,3 +17,4 @@ tasks:
     cmds:
       - task: stop
       - "limactl delete {{.name}}"
+      - "rm ssh.config"
