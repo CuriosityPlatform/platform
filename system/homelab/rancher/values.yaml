@@ -1,0 +1,7 @@
+domain: microuser-dark5.local
+
+rancher:
+  ingress:
+    enabled: false
+  bootstrapPassword: admin
+  replicas: 1
