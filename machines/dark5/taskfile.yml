@@ -1,0 +1,46 @@
+version: '3'
+
+vars:
+  projects: [k3s]
+
+dotenv: [.env]
+
+tasks:
+  install:
+    cmds:
+      - for: { var: projects, as: project }
+        task: install:{{.project}}
+
+  uninstall:
+    cmds:
+      - for: { var: projects, as: project }
+        task: uninstall:{{.project}}
+
+  install:*:
+    vars:
+      project: "{{index .MATCH 0}}"
+    dir: '{{.project}}'
+    cmds:
+      - "task install SSH_HOST={{.SSH_HOST}} SSH_FILE={{.SSH_FILE}}"
+
+  uninstall:*:
+    vars:
+      project: "{{index .MATCH 0}}"
+    dir: '{{.project}}'
+    cmds:
+      - "task uninstall SSH_HOST={{.SSH_HOST}} SSH_FILE={{.SSH_FILE}}"
+
+  stats:*:
+    vars:
+      project: "{{index .MATCH 0}}"
+    dir: '{{.project}}'
+    cmds:
+      - "task stats SSH_HOST={{.SSH_HOST}} SSH_FILE={{.SSH_FILE}}"
+
+  ps:*:
+    vars:
+      project: "{{index .MATCH 0}}"
+    dir: '{{.project}}'
+    cmds:
+      - "task ps SSH_HOST={{.SSH_HOST}} SSH_FILE={{.SSH_FILE}}"
+

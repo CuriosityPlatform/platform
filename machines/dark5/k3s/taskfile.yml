@@ -3,30 +3,46 @@ version: '3'
 vars:
   project: "k3s"
 
-  ssh_host: "lima-dark5-test"
-  ssh_file: "/Users/vadim.makerov/.lima/dark5-test/ssh.config"
-
 tasks:
+  install:
+    cmds:
+      - task: up
+      - task: kubeconfig
+
+  uninstall:
+    cmds:
+      - task: down
+      - task: kubeconfigrm
+
   up:
     cmds:
       - task: copy
-      - "ssh -F {{.ssh_file}} {{.ssh_host}} -- 'docker compose --project-directory ~/{{.project}} up -d'"
+      - "ssh -F {{.SSH_FILE}} {{.SSH_HOST}} -- 'docker compose --project-directory ~/{{.project}} up -d'"
 
   copy:
     cmds:
-      - "ssh -F {{.ssh_file}} {{.ssh_host}} -- 'mkdir -p ~/{{.project}}'"
-      - "scp -F {{.ssh_file}} compose.yaml lima-dark5-test:~/{{.project}}/compose.yaml"
+      - "ssh -F {{.SSH_FILE}} {{.SSH_HOST}} -- 'mkdir -p ~/{{.project}}'"
+      - "scp -F {{.SSH_FILE}} compose.yaml {{.SSH_HOST}}:~/{{.project}}/compose.yaml"
 
   kubeconfig:
     cmds:
-      - scp -F {{.ssh_file}} lima-dark5-test:~/{{.project}}/kubeconfig.yaml kubeconfig.yaml
+      - scp -F {{.SSH_FILE}} {{.SSH_HOST}}:~/{{.project}}/kubeconfig.yaml kubeconfig.yaml
       # copy to local configs
       - mv kubeconfig.yaml ~/.kube/config/default.yaml
 
+  kubeconfigrm:
+    cmd: ~/.kube/config/default.yaml
+
   stop:
-    cmd: "ssh -F {{.ssh_file}} {{.ssh_host}} -- 'docker compose --project-directory ~/{{.project}} down -v'"
+    cmd: "ssh -F {{.SSH_FILE}} {{.SSH_HOST}} -- 'docker compose --project-directory ~/{{.project}} down -v'"
 
   down:
     cmds:
       - task: stop
-      - "ssh -F {{.ssh_file}} {{.ssh_host}} rm -rf ~/{{.project}}"
+      - "ssh -F {{.SSH_FILE}} {{.SSH_HOST}} rm -rf ~/{{.project}}"
+
+  stats:
+    cmd: "ssh -F {{.SSH_FILE}} {{.SSH_HOST}} -- 'docker compose --project-directory ~/{{.project}} stats'"
+
+  ps:
+    cmd: "ssh -F {{.SSH_FILE}} {{.SSH_HOST}} -- 'docker compose --project-directory ~/{{.project}} ps'"

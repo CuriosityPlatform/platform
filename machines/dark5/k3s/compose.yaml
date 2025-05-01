@@ -5,7 +5,8 @@ services:
   server:
     image: "rancher/k3s:v1.32.3-k3s1"
     hostname: server
-    command: server --disable=traefik
+    command: |
+      server --disable=traefik --tls-san=microuser-DARK5 --tls-san=microuser-DARK5.local
     tmpfs:
       - /run
       - /var/run
@@ -47,6 +48,8 @@ services:
       - K3S_TOKEN=token
     volumes:
       - k3s-agent:/var/lib/rancher/k3s
+      # Mount application data folder
+      - /k3s-appdata:/mnt/data
       # mount BAG volume
       - /media/microuser/BAG:/mnt/bag
 
