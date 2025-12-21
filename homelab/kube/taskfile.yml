@@ -25,6 +25,7 @@ tasks:
       RELEASE: "{{index .MATCH 0}}"
     dir: '{{.RELEASE}}'
     cmds:
+      - nelm chart dependency download
       - nelm release plan install -n {{.RELEASE}} -r {{.RELEASE}} .
       - task: _install_prompt
       - nelm release install -n {{.RELEASE}} -r {{.RELEASE}} .
