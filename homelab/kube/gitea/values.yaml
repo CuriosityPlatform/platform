@@ -18,6 +18,19 @@ gitea:
         DOMAIN: code.microuser-dark5.local
         SSH_DOMAIN: code.microuser-dark5.local
 
+  image:
+    # Sync version with chart version
+    fullOverride: gitea/gitea:1.24.6-rootless
+
+  persistence:
+    enabled: true
+    create: false
+    claimName: gitea-pvc
+    mountPath: /data
+    accessModes:
+      - ReadWriteOnce
+    size: 50Gi
+
   postgresql:
     enabled: false
   postgresql-ha:
@@ -30,15 +43,6 @@ gitea:
     enabled: false
   valkey-cluster:
     enabled: false
-
-  persistence:
-    enabled: true
-    create: false
-    claimName: gitea-pvc
-    mountPath: /data
-    accessModes:
-      - ReadWriteOnce
-    size: 50Gi
 
   preExtraInitContainers:
     # fix persmissions for folder
