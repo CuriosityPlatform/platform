@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gitea
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30s"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "20s"
+    nginx.ingress.kubernetes.io/listen-ports: "80"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0" # do not limit body size
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: code.{{ .Values.domain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gitea
+                port:
+                  number: 3000

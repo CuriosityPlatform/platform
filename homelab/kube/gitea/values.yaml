@@ -1,0 +1,57 @@
+domain: microuser-dark5.local
+
+gitea:
+  gitea:
+    admin:
+      existingSecret: gitea-admin
+    config:
+      APP_NAME: Homelab Gitea
+      database:
+        DB_TYPE: sqlite3
+        PATH: /data/gitea/gitea.db
+      repository:
+        ROOT: /data/git/repositories
+      security:
+        INSTALL_LOCK: true
+      server:
+        ROOT_URL: http://code.microuser-dark5.local/
+        DOMAIN: code.microuser-dark5.local
+        SSH_DOMAIN: code.microuser-dark5.local
+
+  postgresql:
+    enabled: false
+  postgresql-ha:
+    enabled: false
+  mysql:
+    enabled: false
+  mariadb:
+    enabled: false
+  valkey:
+    enabled: false
+  valkey-cluster:
+    enabled: false
+
+  persistence:
+    enabled: true
+    create: false
+    claimName: gitea-pvc
+    mountPath: /data
+    accessModes:
+      - ReadWriteOnce
+    size: 50Gi
+
+  preExtraInitContainers:
+    # fix persmissions for folder
+    - name: fix-data-permissions
+      image: busybox:1.36
+      command:
+        - /bin/sh
+        - -c
+        - |
+          set -eu
+          mkdir -p /data/git /data/gitea
+          chown -R 1000:1000 /data
+          chmod -R u+rwX,g+rwX /data
+      volumeMounts:
+        - name: data
+          mountPath: /data

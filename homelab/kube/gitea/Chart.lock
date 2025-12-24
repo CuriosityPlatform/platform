@@ -1,0 +1,6 @@
+dependencies:
+- name: gitea
+  repository: oci://registry-1.docker.io/giteacharts
+  version: 12.4.0
+digest: sha256:f249356158e2037027061e4bde8d8a491db6948642045526481a80027a29dd3b
+generated: "2025-12-24T21:37:38.72122+03:00"
