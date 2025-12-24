@@ -1,13 +1,18 @@
-version: '3'
+version: "3"
 
 vars:
   releases: [
-    ingress-nginx,
-    # rancher, excluded from default installation
-    restic,
-    transmission,
-    filebrowser,
-  ]
+      ingress-nginx,
+      # rancher, excluded from default installation
+      restic,
+      transmission,
+      filebrowser,
+      gitea,
+    ]
+
+env:
+  NELM_SECRET_KEY:
+    sh: "g cat homelab/platform/nelm-secret"
 
 tasks:
   install:
@@ -23,7 +28,7 @@ tasks:
   install:*:
     vars:
       RELEASE: "{{index .MATCH 0}}"
-    dir: '{{.RELEASE}}'
+    dir: "{{.RELEASE}}"
     cmds:
       - nelm chart dependency download
       - nelm release plan install -n {{.RELEASE}} -r {{.RELEASE}} .
@@ -33,7 +38,7 @@ tasks:
   uninstall:*:
     vars:
       RELEASE: "{{index .MATCH 0}}"
-    dir: '{{.RELEASE}}'
+    dir: "{{.RELEASE}}"
     cmds:
       - nelm release uninstall -n {{.RELEASE}} -r {{.RELEASE}}
 
