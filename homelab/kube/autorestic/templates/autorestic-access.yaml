@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: autorestic-access
+type: Opaque
+stringData:
+  rclone.conf: |
+    {{ .Values.rcloneConfig | nindent 4 }}
+  repoPass: "{{ .Values.repoPass }}"

@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: autorestic
+spec:
+  schedule: "30 0 * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 5
+      ttlSecondsAfterFinished: 172800
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: autorestic
+              image: cupcakearmy/autorestic:1.8.3
+              command:
+                - autorestic
+              args:
+                - --config
+                - /config/autorestic.yml
+                - "-v" # make verbose output
+                - backup
+                - -a
+              env:
+                - name: AUTORESTIC_YADISK_RESTIC_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: autorestic-access
+                      key: repoPass
+              volumeMounts:
+                - name: autorestic-data
+                  mountPath: /data
+                - name: autorestic-config
+                  mountPath: /config/autorestic.yml
+                  subPath: autorestic.yml
+                - name: rclone-config
+                  mountPath: /root/.config/rclone/rclone.conf
+                  subPath: rclone.conf
+          volumes:
+            - name: autorestic-data
+              persistentVolumeClaim:
+                claimName: autorestic-pvc
+            - name: autorestic-config
+              configMap:
+                name: config
+            - name: rclone-config
+              secret:
+                secretName: autorestic-access

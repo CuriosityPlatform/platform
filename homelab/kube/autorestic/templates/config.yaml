@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+data:
+  autorestic.yml: |
+    version: 2
+
+    locations:
+      bag:
+        from:
+          # Backup own backup server :)
+          - /data/restic
+          # Disk
+          - /data/Disk
+        to:
+          - yadisk
+        options:
+          backup:
+            exclude:
+              # Exclude films directory
+              - /data/Disk/Films
+          forget:
+            keep-last: 5
+            keep-monthly: 6
+
+    backends:
+      yadisk:
+        type: rclone
+        path: ya-disk:backup/BAG
